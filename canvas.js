@@ -13,35 +13,54 @@ function Wave(name, color, trajectory, speed){
     this.color  = color
     this.traj   = trajectory
     this.speed  = speed
-    
-    
-}
-var slope = 0.1
+    this.draw = function () {
+        c.beginPath()
+c.moveTo(0, canvas.height)
+c.linewidth = 10
+var startWave = (2 * canvas.height / 3)
 
-//t axis
+for(let i = 0; i < canvas.width; i++){ 
+    c.lineTo(i, (-slope * i) + startWave + 100 * Math.sin(.01 * i))
+}
+
+    }
+    
+        
+}
+
+var slope = 0.15
+var axisWidth = 2
+//x axis
 c.beginPath()
 c.moveTo(0, 2 * canvas.height / 3)
-c.linewidth = 10
+c.lineWidth = 1
 c.lineTo(canvas.width, (- canvas.width * slope) + (2 * canvas.height / 3))
 c.stroke();
 
-//bottom axis
-c.moveTo(0, 5 * canvas.height / 6)
-c.linewidth = 10
-c.lineTo(canvas.width, (- canvas.width * slope) + (5 * canvas.height / 6))
-c.stroke();
+// //bottom axis
+// c.moveTo(0, 5 * canvas.height / 6)
+// c.linewidth = 10
+// c.lineTo(canvas.width, (- canvas.width * slope) + (5 * canvas.height / 6))
+// c.stroke();
 
 //y-axis
-c.moveTo(150 + (slope * canvas.height), canvas.height)
-c.linewidth = 10
-c.lineTo(150, 0)
+c.moveTo(271, canvas.height)
+c.lineWidth = axisWidth
+c.lineTo(271, 0)
+c.stroke();
+
+//z-axis
+c.moveTo(0, canvas.height / 2)
+c.linewidth = axisWidth
+c.lineTo(canvas.width, (canvas.width * 3.75 * slope) + (2 * canvas.height / 3))
 c.stroke();
 
 //sine 
 c.beginPath()
 c.moveTo(0, canvas.height)
-c.linewidth = 10
-var startWave = (2 * canvas.height / 3)
+c.lineWidth = 10
+c.color
+var startWave = (7 * canvas.height / 10)
 
 for(let i = 0; i < canvas.width; i++){ 
     c.lineTo(i, (-slope * i) + startWave + 100 * Math.sin(.01 * i))
