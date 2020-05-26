@@ -5,18 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Canvas Tutorial</title>
     <style type="text/css">
-      canvas {
-        background-color: rgba(241, 255, 252, 0.886);
-        background-image: url('background.jpeg')
-      }
+    
       body {
         margin: 0;
       }
     </style>
   </head>
   <body>
-    <canvas id = "layer1"></canvas>
-    <canvas id = "layer2"></canvas>
+    <canvas id = "layer1" style=" background-image: url('background.jpeg'); position: absolute;  left: 0; top: 0; z-index: 0;"></canvas></canvas>
+    <canvas id = "layer2" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
 
     <script src="canvas.js"></script>
   </body>
