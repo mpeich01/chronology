@@ -4,10 +4,13 @@ var layer2 = document.getElementById("layer2");
 const  width = 1302
 const  height = 744;
 
+
 layer1.width = width; //Givners screen is 1302 x 744
 layer1.height = height;
 layer2.width = width;
 layer2.height = height;
+var paused = false; 
+
 
 var c1 = layer1.getContext('2d');
 var c2 = layer2.getContext('2d');
@@ -90,29 +93,62 @@ function cWheel(x, y, isLeft) {
 	this.x = x;
 	this.y = y;
 
-	this.draw = function() {
-		c1.beginPath();
-		c1.moveTo(this.x, this.y)
-		c1.ellipse(this.x, this.y, 60, 120, Math.PI, Math.PI / 2, 3 * Math.PI / 2, isLeft)	
-		c1.lineWidth = 100;
-		c1.fillStyle = 'yellow';
-		c1.fill();
+	this.draw = function(ctx) {
+		ctx.beginPath();
+		ctx.moveTo(this.x, this.y)
+		ctx.ellipse(this.x, this.y, 60, 120, Math.PI, Math.PI / 2, 3 * Math.PI / 2, isLeft)	
+		ctx.lineWidth = 100;
+		ctx.fillStyle = 'yellow';
+		ctx.fill();
 	};
 
-	this.update = function() {
-		c1.moveTo(this.x, this.y)
+	this.update = function(ctx) {
+		ctx.moveTo(this.x, this.y)
 		dx = 0.1;
 		dy = 0.01118033;
-		c1.ellipse(this.x, this.y, 60, 120, Math.PI, Math.PI / 2, 3 * Math.PI / 2, isLeft)
+		ctx.ellipse(this.x, this.y, 60, 120, Math.PI, Math.PI / 2, 3 * Math.PI / 2, isLeft)
 		if(this.x < 1000) { //So it stops at 1000 and doesnt go off screen
 			this.x += dx;
 			this.y -= dy;
 		}
-		c1.fillStyle = 'yellow';
-		c1.fill();
+		ctx.fillStyle = 'yellow';
+		ctx.fill();
+	
 	};
 }
 
+colorArray = ["red, blue, green, yellow, purple, orange, pink, brown, grey, ivory, lightBlue, darkSeaGreen"]
+
+function twelveTribes(y, color){
+	this.topLineY =  y;
+	this.color = color;
+	
+	c2.beginPath()
+	c2.fillRect(0, this.topLineY, layer2.width, layer2.height / 12);
+}
+
+
+//zooming in functions 
+var intervalID = 0;
+function increase(){
+	console.log("in breakout")
+	paused = true;
+}
+function sineZoomIn(){
+
+	var diff = 2
+	if (c2.lineWidth < 20){
+		c2.lineWidth +=diff;
+	}
+	else{
+		clearInterval(intervalID)
+	}
+}
+function breakout(){
+	console.log("in breakout")
+	paused = true;
+}
+//animation 
 sine = new Wave('Israel', 'blue', slope, 500);
 
 xAxis = new XZaxis(slope, false);
@@ -138,7 +174,7 @@ function animate() {
 	//axes (go on layer1)
 	xAxis.draw();
 	yAxis.update();
-	leftcwheel.update();
+	leftcwheel.update(c1);
 	zAxis.updateZ();
 
 	// sine wave(goes on layer2)
@@ -161,9 +197,12 @@ function animate() {
 	c2.stroke();
 
 	c2.beginPath();
-	rightcwheel.update()
+	rightcwheel.update(c2)
 	sine.frequency += 0.01;
-
+	if (paused){
+		Animation.pause(); 
+	}
+		
 }
 
 animate();
