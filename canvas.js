@@ -1,16 +1,14 @@
-var layer1 = document.getElementById("layer1");
-var layer2 = document.getElementById("layer2");
+var layer1 = document.getElementById('layer1');
+var layer2 = document.getElementById('layer2');
 
-const  width = 1302
-const  height = 744;
-
+const width = 1302;
+const height = 744;
 
 layer1.width = width; //Givners screen is 1302 x 744
 layer1.height = height;
 layer2.width = width;
 layer2.height = height;
-var paused = false; 
-
+var zoomed = false;
 
 var c1 = layer1.getContext('2d');
 var c2 = layer2.getContext('2d');
@@ -67,13 +65,14 @@ function XZaxis(slope, isZ) {
 		c1.strokeStyle = 'red';
 		c1.stroke();
 	};
-	this.updateZ = function(){
+	this.updateZ = function() {
 		this.draw();
-		movTo += .0006;
-		linTo += .0006;
-	}
+		movTo += 0.0006;
+		linTo += 0.0006;
+	};
 }
-function Yaxis(x){ //240
+function Yaxis(x) {
+	//240
 	this.x = x;
 	this.draw = function() {
 		c1.moveTo(this.x, layer1.height);
@@ -81,13 +80,12 @@ function Yaxis(x){ //240
 		c1.lineTo(this.x, 0);
 		c1.strokeStyle = 'red';
 		c1.stroke();
-	}
-	this.update = function(){
-		this.draw()
-		this.x--
-	}
+	};
+	this.update = function() {
+		this.draw();
+		this.x--;
+	};
 }
-	
 
 function cWheel(x, y, isLeft) {
 	this.x = x;
@@ -95,60 +93,61 @@ function cWheel(x, y, isLeft) {
 
 	this.draw = function(ctx) {
 		ctx.beginPath();
-		ctx.moveTo(this.x, this.y)
-		ctx.ellipse(this.x, this.y, 60, 120, Math.PI, Math.PI / 2, 3 * Math.PI / 2, isLeft)	
+		ctx.moveTo(this.x, this.y);
+		ctx.ellipse(this.x, this.y, 60, 120, Math.PI, Math.PI / 2, 3 * Math.PI / 2, isLeft);
 		ctx.lineWidth = 100;
 		ctx.fillStyle = 'yellow';
 		ctx.fill();
 	};
 
 	this.update = function(ctx) {
-		ctx.moveTo(this.x, this.y)
+		ctx.moveTo(this.x, this.y);
 		dx = 0.1;
 		dy = 0.01118033;
-		ctx.ellipse(this.x, this.y, 60, 120, Math.PI, Math.PI / 2, 3 * Math.PI / 2, isLeft)
-		if(this.x < 1000) { //So it stops at 1000 and doesnt go off screen
+		ctx.ellipse(this.x, this.y, 60, 120, Math.PI, Math.PI / 2, 3 * Math.PI / 2, isLeft);
+		if (this.x < 1000) {
+			//So it stops at 1000 and doesnt go off screen
 			this.x += dx;
 			this.y -= dy;
 		}
 		ctx.fillStyle = 'yellow';
 		ctx.fill();
-	
 	};
 }
 
-colorArray = ["red, blue, green, yellow, purple, orange, pink, brown, grey, ivory, lightBlue, darkSeaGreen"]
+colorArray = [ 'red, blue, green, yellow, purple, orange, pink, brown, grey, ivory, lightBlue, darkSeaGreen' ];
 
-function twelveTribes(y, color){
-	this.topLineY =  y;
+function twelveTribes(y, color) {
+	this.topLineY = y;
 	this.color = color;
-	
-	c2.beginPath()
+
+	c2.beginPath();
 	c2.fillRect(0, this.topLineY, layer2.width, layer2.height / 12);
 }
 
-
-//zooming in functions 
+//zooming in functions
 var intervalID = 0;
-function increase(){
-	console.log("in breakout")
+function increase() {
+	if (!zoomed) {
+		zoomed = true;
+	} else {
+		zoomed = false;
+	}
+	console.log(paused);
+}
+function sineZoomIn() {
+	var diff = 2;
+	if (c2.lineWidth < 20) {
+		c2.lineWidth += diff;
+	} else {
+		clearInterval(intervalID);
+	}
+}
+function breakout() {
+	console.log('in breakout');
 	paused = true;
 }
-function sineZoomIn(){
-
-	var diff = 2
-	if (c2.lineWidth < 20){
-		c2.lineWidth +=diff;
-	}
-	else{
-		clearInterval(intervalID)
-	}
-}
-function breakout(){
-	console.log("in breakout")
-	paused = true;
-}
-//animation 
+//animation
 sine = new Wave('Israel', 'blue', slope, 500);
 
 xAxis = new XZaxis(slope, false);
@@ -157,52 +156,66 @@ yAxis = new Yaxis(240);
 
 leftcwheel = new cWheel(300, 450, true);
 rightcwheel = new cWheel(300, 450, false);
- 
 
 c1.strokeStyle = 'purple';
 
 zAxis.draw();
-
+scale = 1;
+var paused;
 function animate() {
 	requestAnimationFrame(animate);
-	
-	
-	c1.clearRect(0, 0, layer1.width, layer1.height);
-	//c2.fillStyle = 'rgba(0,0,0, 0.01)';
-	c2.clearRect(0, 0, layer1.width, layer1.height);
 
-	//axes (go on layer1)
-	xAxis.draw();
-	yAxis.update();
-	leftcwheel.update(c1);
-	zAxis.updateZ();
+	if (scale > 4) {
+		paused = true;
+	}
+	if (!paused) {
+		c1.clearRect(0, 0, layer1.width, layer1.height);
+		//c2.fillStyle = 'rgba(0,0,0, 0.01)';
+		c2.clearRect(0, 0, layer1.width, layer1.height);
 
-	// sine wave(goes on layer2)
-	c2.beginPath();
-	c2.moveTo(0, layer2.height / 2);
-	c2.lineWidth = 10;
+		//axes (go on layer1)
+		leftcwheel.update(c1);
+		xAxis.draw();
+		yAxis.update();
+		zAxis.updateZ();
 
-	for (let i = 1; i < layer2.width; i++) {
-		//Sine Wave = slope W.R.T. x-position(height increases left -> right)
-		//          + Starting height
-		//          + amplitude / cubed root of x-position(decreasing amplitude left -> right)
-		//          * sine function of (horizontal shrink of cons + frequency)
-		//            reference:
-		//              c1.lineTo(i, (-slope * i) + startWave + (500 / (Math.cbrt(i))) * Math.sin(.02 * i + .frequency))
+		// sine wave(goes on layer2)
+		c2.beginPath();
+		c2.moveTo(0, layer2.height / 2);
+		c2.lineWidth = 10;
 
-		c2.lineTo(i,-slope * i + sine.startWave + sine.amp / Math.cbrt(i) * Math.sin(sine.wavelength * i + sine.frequency));
+		for (let i = 1; i < layer2.width; i++) {
+			//Sine Wave = slope W.R.T. x-position(height increases left -> right)
+			//          + Starting height
+			//          + amplitude / cubed root of x-position(decreasing amplitude left -> right)
+			//          * sine function of (horizontal shrink of cons + frequency)
+			//            reference:
+			//              c1.lineTo(i, (-slope * i) + startWave + (500 / (Math.cbrt(i))) * Math.sin(.02 * i + .frequency))
+
+			c2.lineTo(
+				i,
+				-slope * i + sine.startWave + sine.amp / Math.cbrt(i) * Math.sin(sine.wavelength * i + sine.frequency)
+			);
+		}
+
+		c2.strokeStyle = 'hsl(255, 50%, 50%)';
+		c2.stroke();
+
+		c2.beginPath();
+		rightcwheel.update(c2);
+		sine.frequency += 0.01;
+	} else {
+		console.log('hi');
 	}
 
-	c2.strokeStyle = 'hsl(255, 50%, 50%)';
-	c2.stroke();
-
-	c2.beginPath();
-	rightcwheel.update(c2)
-	sine.frequency += 0.01;
-	if (paused){
-		Animation.pause(); 
+	c2.scale(scale, scale);
+	c1.scale(scale, scale);
+	if (zoomed) {
+		scale += 0.00001;
+	} else {
+		if (scale > 1) {
+			scale -= 0.00001;
+		}
 	}
-		
 }
-
 animate();
