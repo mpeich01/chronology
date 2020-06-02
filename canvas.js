@@ -96,7 +96,7 @@ function cWheel(x, y, isLeft) {
 		ctx.moveTo(this.x, this.y);
 		ctx.ellipse(this.x, this.y, 60, 120, Math.PI, Math.PI / 2, 3 * Math.PI / 2, isLeft);
 		ctx.lineWidth = 100;
-		ctx.fillStyle = 'yellow';
+		ctx.fillStyle = 'ivory';
 		ctx.fill();
 	};
 
@@ -110,7 +110,7 @@ function cWheel(x, y, isLeft) {
 			this.x += dx;
 			this.y -= dy;
 		}
-		ctx.fillStyle = 'yellow';
+		ctx.fillStyle = 'ivory';
 		ctx.fill();
 	};
 }
@@ -128,12 +128,15 @@ function twelveTribes(y, color) {
 //zooming in functions
 var intervalID = 0;
 function increase() {
-	if (!zoomed) {
-		zoomed = true;
-	} else {
+	if (zoomed){
 		zoomed = false;
+		scale = 1
 	}
-	console.log(paused);
+	else {
+		zoomed = true;
+		scale = 1.025 	
+	}	
+	console.log(zoomed);
 }
 function sineZoomIn() {
 	var diff = 2;
@@ -143,12 +146,9 @@ function sineZoomIn() {
 		clearInterval(intervalID);
 	}
 }
-function breakout() {
-	console.log('in breakout');
-	paused = true;
-}
+
 //animation
-sine = new Wave('Israel', 'blue', slope, 500);
+sine = new Wave('Israel', 'pink', slope, 500);
 
 xAxis = new XZaxis(slope, false);
 zAxis = new XZaxis(slope, true);
@@ -157,7 +157,7 @@ yAxis = new Yaxis(240);
 leftcwheel = new cWheel(300, 450, true);
 rightcwheel = new cWheel(300, 450, false);
 
-c1.strokeStyle = 'purple';
+c1.strokeStyle = 'pink';
 
 zAxis.draw();
 scale = 1;
@@ -165,9 +165,7 @@ var paused;
 function animate() {
 	requestAnimationFrame(animate);
 
-	if (scale > 4) {
-		paused = true;
-	}
+
 	if (!paused) {
 		c1.clearRect(0, 0, layer1.width, layer1.height);
 		//c2.fillStyle = 'rgba(0,0,0, 0.01)';
@@ -192,10 +190,7 @@ function animate() {
 			//            reference:
 			//              c1.lineTo(i, (-slope * i) + startWave + (500 / (Math.cbrt(i))) * Math.sin(.02 * i + .frequency))
 
-			c2.lineTo(
-				i,
-				-slope * i + sine.startWave + sine.amp / Math.cbrt(i) * Math.sin(sine.wavelength * i + sine.frequency)
-			);
+			c2.lineTo(i,-slope * i + sine.startWave + sine.amp / Math.cbrt(i) * Math.sin(sine.wavelength * i + sine.frequency));
 		}
 
 		c2.strokeStyle = 'hsl(255, 50%, 50%)';
@@ -205,17 +200,23 @@ function animate() {
 		rightcwheel.update(c2);
 		sine.frequency += 0.01;
 	} else {
-		console.log('hi');
+		console.log('paused');
 	}
 
-	c2.scale(scale, scale);
-	c1.scale(scale, scale);
-	if (zoomed) {
-		scale += 0.00001;
-	} else {
-		if (scale > 1) {
-			scale -= 0.00001;
-		}
-	}
+	// if (zoomed && scale <= 1.025) {
+	// 		scale += 0.0001;
+	// } 
+	// else if(!zoomed){
+	// 		if (scale >= 1) {
+	// 			scale -= 0.0001;
+	// 		}
+	// 		else{
+	//			paused = false;
+	// 		}
+	// }
+
+	c2.scale(scale, 1);
+	c1.scale(scale, 1);
+	console.log(scale);
 }
 animate();
