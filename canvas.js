@@ -8,15 +8,12 @@ layer1.width = width; //Givners screen is 1302 x 744
 layer1.height = height;
 layer2.width = width;
 layer2.height = height;
-var zoomed = false;
 
 var c1 = layer1.getContext('2d');
 var c2 = layer2.getContext('2d');
-
-scale = 1;
-
+var zoom = false;
 var slope = 0.15;
-var lineWidth = 2;
+var zoomedLineWidth = 10;
 
 // Class for the wave representing a nation's trajectory
 function Wave(name, color, slope, amp) {
@@ -93,7 +90,7 @@ function cWheel(x, y, isLeft) {
 	this.x = x;
 	this.y = y;
 
-	this.draw = function(ctx) {
+	this.draw = function(ctx, zoom) {
 		ctx.beginPath();
 		ctx.moveTo(this.x, this.y);
 		ctx.ellipse(this.x, this.y, 60, 120, Math.PI, Math.PI / 2, 3 * Math.PI / 2, isLeft);
@@ -112,68 +109,71 @@ function cWheel(x, y, isLeft) {
 			this.x += dx;
 			this.y -= dy;
 		}
-		ctx.fillStyle = 'lightBlue';
-		ctx.fill();
+		if (!zoom) {
+			ctx.fillStyle = 'lightBlue';
+			ctx.fill();
+		}
 	};
 }
 
-colorArray = [ 'red, blue, green, yellow, purple, orange, pink, brown, grey, ivory, lightBlue, darkSeaGreen' ];
+colorArray = [
+	'red',
+	'blue',
+	'green',
+	'yellow',
+	'purple',
+	'orange',
+	'pink',
+	'brown',
+	'grey',
+	'ivory',
+	'lightBlue',
+	'darkSeaGreen'
+];
 
 function twelveTribes(y, color) {
 	this.topLineY = y;
 	this.color = color;
 
 	c2.beginPath();
-	c2.fillRect(0, this.topLineY, layer2.width, layer2.height / 12);
+	c2.rect(0, this.topLineY, layer2.width, layer2.height / 12);
+	c2.lineWidth = 62;
+	c2.fillStyle = color;
+	c2.fill();
 }
 
 //zooming in functions
 var intervalID = 0;
 function increase() {
+	zoom = true;
 	clearInterval(intervalID);
-	intervalID = setInterval(expand, 25);
-	// if (scale < 1.025) 
+	intervalID = setInterval(expand, 100);
 }
-function decrease () {
+
+function decrease() {
 	clearInterval(intervalID);
-	intervalID = setInterval(shrink, 25);
+	intervalID = setInterval(shrink, 100);
 }
 
 function expand() {
-	if (scale < 1.025) {
+	if (zoomedLineWidth < height + 100) {
 		paused = false;
-		scale += 0.0001;
-		console.log(paused);
-	}
-	else {
+		zoomedLineWidth += 100;
+	} else {
 		clearInterval(intervalID);
 		paused = true;
 	}
 }
+
 function shrink() {
-	if (scale > 0.996) {
-		paused = false;
-		scale -= 0.0001;
-		console.log("shrinking");
-	}
-	else {
+	paused = false;
+	if (zoomedLineWidth > 10) {
+		zoomedLineWidth -= 100;
+	} else {
 		clearInterval(intervalID);
-		paused = true;
+		zoom = false;
 	}
 }
-	// if (zoomed){
-	// 	zoomed = false;
-	// 	scale = 1
-	// 	//pause = false
-	// }
-	// else {
-	// 	//pause = true
-	// 	zoomed = true;
-	// 	scale = 1.025 
-			
-	// }	
-// 	console.log(zoomed);
-// }
 
 function sineZoomIn() {
 	var diff = 2;
@@ -197,10 +197,11 @@ rightcwheel = new cWheel(300, 450, false);
 c1.strokeStyle = 'pink';
 
 zAxis.draw();
-var paused;
+var paused = false;
+var y = 0;
+
 function animate() {
 	requestAnimationFrame(animate);
-
 
 	if (!paused) {
 		c1.clearRect(0, 0, layer1.width, layer1.height);
@@ -212,11 +213,11 @@ function animate() {
 		xAxis.draw();
 		yAxis.update();
 		zAxis.updateZ();
+		c2.lineWidth = zoomedLineWidth;
 
 		// sine wave(goes on layer2)
 		c2.beginPath();
 		c2.moveTo(0, layer2.height / 2);
-		c2.lineWidth = 10;
 
 		for (let i = 1; i < layer2.width; i++) {
 			//Sine Wave = slope W.R.T. x-position(height increases left -> right)
@@ -226,7 +227,10 @@ function animate() {
 			//            reference:
 			//              c1.lineTo(i, (-slope * i) + startWave + (500 / (Math.cbrt(i))) * Math.sin(.02 * i + .frequency))
 
-			c2.lineTo(i,-slope * i + sine.startWave + sine.amp / Math.cbrt(i) * Math.sin(sine.wavelength * i + sine.frequency));
+			c2.lineTo(
+				i,
+				-slope * i + sine.startWave + sine.amp / Math.cbrt(i) * Math.sin(sine.wavelength * i + sine.frequency)
+			);
 		}
 
 		c2.strokeStyle = 'hsl(255, 50%, 50%)';
@@ -237,22 +241,10 @@ function animate() {
 		sine.frequency += 0.01;
 	} else {
 		console.log('paused');
+		for (let i = 0; i < 12; i++) {
+			twelveTribes(y, colorArray[i]);
+			y += 62;
+		}
 	}
-
-	// if (zoomed && scale <= 1.025) {
-	// 		scale += 0.0001;
-	// } 
-	// else if(!zoomed){
-	// 		if (scale >= 1) {
-	// 			scale -= 0.0001;
-	// 		}
-	// 		else{
-	//			paused = false;
-	// 		}
-	// }
-
-	c2.scale(scale, 1);
-	c1.scale(scale, 1);
-	console.log(scale);
 }
 animate();
