@@ -202,7 +202,12 @@ var y = 0;
 
 function animate() {
 	requestAnimationFrame(animate);
-
+	c2.beginPath();
+	c2.rect(0, 0, layer2.width, layer2.height / 12);
+	c2.lineWidth = 62;
+	c2.fillStyle = 'white';
+	c2.fill();
+	c2.fillText('Hello World', 10, 62);
 	if (!paused) {
 		c1.clearRect(0, 0, layer1.width, layer1.height);
 		//c2.fillStyle = 'rgba(0,0,0, 0.01)';
@@ -245,6 +250,8 @@ function animate() {
 			twelveTribes(y, colorArray[i]);
 			y += 62;
 		}
+		y = 0;
+		console.log('look at me');
 	}
 }
 animate();
