@@ -13,6 +13,8 @@ var zoomed = false;
 var c1 = layer1.getContext('2d');
 var c2 = layer2.getContext('2d');
 
+scale = 1;
+
 var slope = 0.15;
 var lineWidth = 2;
 
@@ -110,7 +112,7 @@ function cWheel(x, y, isLeft) {
 			this.x += dx;
 			this.y -= dy;
 		}
-		ctx.fillStyle = 'ivory';
+		ctx.fillStyle = 'lightBlue';
 		ctx.fill();
 	};
 }
@@ -128,16 +130,51 @@ function twelveTribes(y, color) {
 //zooming in functions
 var intervalID = 0;
 function increase() {
-	if (zoomed){
-		zoomed = false;
-		scale = 1
+	clearInterval(intervalID);
+	intervalID = setInterval(expand, 25);
+	// if (scale < 1.025) 
+}
+function decrease () {
+	clearInterval(intervalID);
+	intervalID = setInterval(shrink, 25);
+}
+
+function expand() {
+	if (scale < 1.025) {
+		paused = false;
+		scale += 0.0001;
+		console.log(paused);
 	}
 	else {
-		zoomed = true;
-		scale = 1.025 	
-	}	
-	console.log(zoomed);
+		clearInterval(intervalID);
+		paused = true;
+	}
 }
+function shrink() {
+	if (scale > 0.996) {
+		paused = false;
+		scale -= 0.0001;
+		console.log("shrinking");
+	}
+	else {
+		clearInterval(intervalID);
+		paused = true;
+	}
+}
+	// if (zoomed){
+	// 	zoomed = false;
+	// 	scale = 1
+	// 	//pause = false
+	// }
+	// else {
+	// 	//pause = true
+	// 	zoomed = true;
+	// 	scale = 1.025 
+			
+	// }	
+// 	console.log(zoomed);
+// }
+
 function sineZoomIn() {
 	var diff = 2;
 	if (c2.lineWidth < 20) {
@@ -160,7 +197,6 @@ rightcwheel = new cWheel(300, 450, false);
 c1.strokeStyle = 'pink';
 
 zAxis.draw();
-scale = 1;
 var paused;
 function animate() {
 	requestAnimationFrame(animate);
