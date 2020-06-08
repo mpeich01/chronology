@@ -26,24 +26,27 @@ function Wave(name, color, slope, amp) {
 	this.wavelength = -0.02;
 	this.frequency = 0.01; //incrementer in animation
 
-	// this.draw = function() {
-	// 	c1.beginPath();
-	// 	c1.moveTo(0, layer1.height);
-	// 	c1.lineWidth = 10;
-	// 	for (let i = 0; i < layer1.width; i++) {
-	// 		//Sine Wave = slope W.R.T. x-position(height increases left -> right)
-	// 		//          + Starting height
-	// 		//          + amplitude / cubed root of x-position(decreasing amplitude left -> right)
-	// 		//          * sine function of (horizontal shrink of cons + frequency)
-	// 		//            reference:
-	// 		//              c1.lineTo(i, (-slope * i) + startWave + (500 / (Math.cbrt(i))) * Math.sin(.02 * i + .frequency))
+	this.draw = function() {
+		c2.beginPath();
+		c2.moveTo(0, layer2.height / 2);
 
-	// 		c1.lineTo(i, -slope * i + this.startWave + amp / Math.cbrt(i) * Math.sin(wavelength * i));
-	// 		c1.strokeStyle = color;
-	// 		c1.stroke();
-	// 		this.frequency += this.frequency;
-	// 	}
-	// }
+		for (let i = 1; i < layer2.width; i++) {
+			//Sine Wave = slope W.R.T. x-position(height increases left -> right)
+			//          + Starting height
+			//          + amplitude / cubed root of x-position(decreasing amplitude left -> right)
+			//          * sine function of (horizontal shrink of cons + frequency)
+			//            reference:
+			//              c1.lineTo(i, (-slope * i) + startWave + (500 / (Math.cbrt(i))) * Math.sin(.02 * i + .frequency))
+
+			c2.lineTo(
+				i,
+				-slope * i + this.startWave + this.amp / Math.cbrt(i) * Math.sin(this.wavelength * i + this.frequency)
+			);
+		}
+
+		c2.strokeStyle = 'hsl(255, 50%, 50%)';
+		c2.stroke();
+	};
 }
 
 function XZaxis(slope, isZ) {
@@ -221,22 +224,7 @@ function animate() {
 		c2.lineWidth = zoomedLineWidth;
 
 		// sine wave(goes on layer2)
-		c2.beginPath();
-		c2.moveTo(0, layer2.height / 2);
-
-		for (let i = 1; i < layer2.width; i++) {
-			//Sine Wave = slope W.R.T. x-position(height increases left -> right)
-			//          + Starting height
-			//          + amplitude / cubed root of x-position(decreasing amplitude left -> right)
-			//          * sine function of (horizontal shrink of cons + frequency)
-			//            reference:
-			//              c1.lineTo(i, (-slope * i) + startWave + (500 / (Math.cbrt(i))) * Math.sin(.02 * i + .frequency))
-
-			c2.lineTo(
-				i,
-				-slope * i + sine.startWave + sine.amp / Math.cbrt(i) * Math.sin(sine.wavelength * i + sine.frequency)
-			);
-		}
+		sine.draw();
 
 		c2.strokeStyle = 'hsl(255, 50%, 50%)';
 		c2.stroke();
