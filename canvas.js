@@ -134,15 +134,15 @@ colorArray = [
 	'darkSeaGreen'
 ];
 
-function twelveTribes(y, color) {
+function tribe(y, color, width) {
 	this.topLineY = y;
 	this.color = color;
-
-	c2.beginPath();
-	c2.rect(0, this.topLineY, layer2.width, layer2.height / 12);
-	c2.lineWidth = 62;
-	c2.fillStyle = color;
-	c2.fill();
+	this.tribes = [];
+	this.draw = function() {
+		newTribe = new Wave('name', color, slope, 500);
+		c2.lineWidth = width;
+		newTribe.draw();
+	};
 }
 
 //zooming in functions
@@ -201,14 +201,14 @@ c1.strokeStyle = 'pink';
 
 zAxis.draw();
 var paused = false;
-var y = 0;
 
+var y = 0;
 function animate() {
 	requestAnimationFrame(animate);
 	c2.beginPath();
 	c2.rect(0, 0, layer2.width, layer2.height / 12);
 	c2.lineWidth = 62;
-	c2.fillStyle = 'white';
+	c2.fillStyle = 'orange';
 	c2.fill();
 	c2.fillText('Hello World', 10, 62);
 	if (!paused) {
@@ -234,12 +234,15 @@ function animate() {
 		sine.frequency += 0.01;
 	} else {
 		console.log('paused');
-		for (let i = 0; i < 12; i++) {
-			twelveTribes(y, colorArray[i]);
-			y += 62;
-		}
-		y = 0;
-		console.log('look at me');
 	}
 }
 animate();
+
+function makeTwelve() {
+	for (let i = 0; i < 12; i++) {
+		tribe(y, colorArray[i]);
+		y += 62;
+	}
+	y = 0;
+	console.log('look at me');
+}
