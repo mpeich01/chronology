@@ -116,13 +116,10 @@
 	}
 
 	function startStop() {
-		var player = document.getElementById('player');
 		if (timer) {
 			timer = clearInterval(timer);
-			player.pause();
 		} else {
 			timer = setInterval(loop, 1000 / 60);
-			player.play();
 		}
 	}
 
