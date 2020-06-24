@@ -1,6 +1,6 @@
 (function() {
-	var LENGTH = 1000,
-		RADIUS = 100,
+	var LENGTH = 10000,
+		RADIUS = 300,
 		VELOCITY = 1;
 	var camera,
 		scene,
@@ -26,35 +26,51 @@
 		scene = new THREE.Scene();
 
 		for (var i = 0; i < LENGTH; i++) {
-			var n = 20,
-				frequency = 0.3,
-				r = 255,
-				g = 0,
-				b = 0,
-				color = rgb2Hex(r, g, b);
+			// var n = 20,
+			// 	frequency = 0.5,
+			(r = 255), (g = 0), (b = 0), (color = rgb2Hex(r, g, b));
 
+			let curvePoints = [];
 			var particle = (spiralParticles[i] = new THREE.Particle(
-				new THREE.ParticleCircleMaterial({
-					color: color,
-					opacity: 0.6
-				})
-			));
-			particle.position.x = particle.position.y = 0;
-			particle.position.z = -1800 + i * 5;
-			particle.scale.x = particle.scale.y = 10;
-			scene.addObject(particle);
-
-			var curveParticle = (curveSpiralParticles[i] = new THREE.Particle(
 				new THREE.ParticleCircleMaterial({
 					color: color,
 					opacity: 0.8
 				})
 			));
-			curveParticle.position.x = curveParticle.position.y = 0;
-			curveParticle.position.z = 0;
-			curveParticle.scale.x = curveParticle.scale.y = 30;
-			//	scene.addObject(curveParticle);
+			particle.position.x = particle.position.y = 50;
+			particle.position.z = -18000 + i * 10; // length
+			particle.scale.x = particle.scale.y = 30;
+			scene.addObject(particle);
+
+			// 	var curveParticle = (curveSpiralParticles[i] = new THREE.Particle(
+			// 		new THREE.ParticleCircleMaterial({
+			// 			color: color,
+			// 			opacity: 0.8
+			// 		})
+			// 	));
+			// 	curveParticle.position.x = curveParticle.position.y = 0;
+			// 	curveParticle.position.z = 0;
+			// 	curveParticle.scale.x = curveParticle.scale.y = 10;
+			// 	// scene.addObject(curveParticle);
 		}
+
+		// var curve = new THREE.SplineCurve([
+		// 	new THREE.Vector2(-10, 0),
+		// 	new THREE.Vector2(-5, 5),
+		// 	new THREE.Vector2(0, 0),
+		// 	new THREE.Vector2(5, -5),
+		// 	new THREE.Vector2(10, 0)
+		// ]);
+
+		// var points = curve.getPoints(50);
+		// var geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+		// var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+
+		// // Create the final object to add to the scene
+		// var splineObject = new THREE.Line(geometry, material);
+
+		// scene.add(splineObject);
 
 		renderer = new THREE.CanvasRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
@@ -131,13 +147,13 @@
 			var particle = spiralParticles[i];
 			var rad = deg2Rad(deg * VELOCITY);
 
-			particle.position.x = sin(rad - i * 0.3) * RADIUS;
-			particle.position.y = cos(rad - i * 0.3) * RADIUS;
+			particle.position.x = sin(rad - i * 0.2) * RADIUS;
+			particle.position.y = cos(rad - i * 0.2) * RADIUS;
 			//particle.scale.x = particle.scale.y = 1 + abs(12 * sin(rad));
 
-			var curveParticle = curveSpiralParticles[i];
-			curveParticle.position.x += cos(rad + i * 0.2) * 10;
-			curveParticle.position.y += sin(rad + i * 0.2) * 10;
+			// var curveParticle = curveSpiralParticles[i];
+			// curveParticle.position.x -= cos(rad + i * 0.2) * 10;
+			// curveParticle.position.y -= sin(rad + i * 0.2) * 10;
 		}
 
 		count += 1;
